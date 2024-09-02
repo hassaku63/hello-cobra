@@ -23,22 +23,40 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
+)
+
+var (
+	token    string
+	intParam int64
 )
 
 // subcmd2Cmd represents the subcmd2 command
 var subcmd2Cmd = &cobra.Command{
 	Use:   "subcmd2",
 	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		fmt.Println("subcmd2.PersistentPreRun called")
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+		if token == "" {
+			token = os.Getenv("API_TOKEN")
+			if token == "" {
+				return fmt.Errorf("--token is required")
+			}
+		}
+
+		if intParam < 1 || intParam > 100 {
+			return fmt.Errorf("intParam should be in range [1, 100]")
+		}
+		return nil
+	},
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("subcmd2 called")
+		fmt.Println("subcmd2.Run called")
+		fmt.Printf("[subcmd2] debug: %v\n", debugMode)
+		fmt.Printf("[subcmd2] token: %v\n", token)
+		fmt.Printf("[subcmd2] intParam: %v\n", intParam)
 	},
 }
 
@@ -49,7 +67,8 @@ func init() {
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// subcmd2Cmd.PersistentFlags().String("foo", "", "A help for foo")
+	subcmd2Cmd.PersistentFlags().StringVarP(&token, "token", "t", "", "API token for subcmd2, If not set, use the value from API_TOKEN environment variable")
+	subcmd2Cmd.PersistentFlags().Int64VarP(&intParam, "int", "i", 10, "common parameter for subcmd2, (1 <= int <= 100)")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
