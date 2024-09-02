@@ -6,7 +6,7 @@ https://pkg.go.dev/github.com/spf13/cobra
 
 Each sub-command performs a common setup by using `PersistentPreRun`.
 
-## Reprode
+## Reproduce
 
 Prerequisites:
 
