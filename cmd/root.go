@@ -22,26 +22,42 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"os"
 
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
-
+var debugMode bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "hello-cobra",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "Example cobra cli",
+	// 	Long: `A longer description that spans multiple lines and likely contains
+	// examples and usage of using your application. For example:
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	// Cobra is a CLI library for Go that empowers applications.
+	// This application is a tool to generate the needed files
+	// to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+		if debugMode {
+			zerolog.SetGlobalLevel(zerolog.DebugLevel)
+		} else {
+			zerolog.SetGlobalLevel(zerolog.WarnLevel)
+		}
+
+		fmt.Println("rootCmd.PersistentPreRun called")
+	},
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("rootCmd.Run called")
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -58,11 +74,10 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.hello-cobra.yaml)")
+	// global arg
+	rootCmd.PersistentFlags().BoolVar(&debugMode, "debug", false, "enable debug log (default: false)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
-
-
