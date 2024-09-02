@@ -43,7 +43,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	subcmd2.AddCommand(nestedCmd)
+	subcmd2Cmd.AddCommand(nestedCmd)
 
 	// Here you will define your flags and configuration settings.
 

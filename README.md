@@ -23,4 +23,10 @@ $ cobra-cli add -p rootCmd subcmd1 # add ./cmd/subcmd1.go
 $ cobra-cli add -p rootCmd subcmd2 # add ./cmd/subcmd2.go
 
 $ cobra-cli add -p subcmd2Cmd nested # add ./cmd/nested.go
+
+# ... edit your code ...
+
+$ go run main.go subcmd1
+$ go run main.go subcmd2
+$ go run main.go subcmd2 nested
 ```
